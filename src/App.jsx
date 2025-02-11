@@ -1,34 +1,47 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { useReducer, useState } from 'react'
 import './App.css'
+import CalculatorBody from './CalculatorBody'
+import CalculateResult from './CalculateResult'
 
-function App() {
-  const [count, setCount] = useState(0)
+function App() {  
+  let initialState = { input: ''}
+  
+  {/* this reducer gets called when a button click gets trigerred*/}
+  const calculatorReducer = (state, action) =>{
+    switch(action.type){
+
+      case 'CLEAR':
+        return { input: ''}
+      
+      case 'DELETE':
+        return { input: state.input.slice(0,-1)}
+
+      case 'APPEND':{
+        return {input: state.input + action.payload}
+      }
+
+      case 'CALCULATE':{
+        /**
+         * here calculate result acts as a pure function
+         * hence it works in react aswell
+         */
+        return CalculateResult(state.input)
+      }
+
+      default:
+        return state
+    }
+  }
+
+  const [state, dispatch] = useReducer(calculatorReducer, initialState)
 
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+    <div className='container'>
+      <div className='calc'>
+        <h1 id='input'>{state.input}</h1>
+        <CalculatorBody dispatch={dispatch}/>
       </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
+    </div>
   )
 }
 
