@@ -1,51 +1,10 @@
 import { useReducer, useState } from 'react'
 import './App.css'
 import CalculatorBody from './CalculatorBody'
+import CalculateResult from './CalculateResult'
 
 function App() {  
   let initialState = { input: ''}
-
-  const calculateResult = (value) =>{
-    let result = ''
-    try{
-      const operators = ['+','-','*','/']
-      let operator = null
-      for(let char of value){
-        if(operators.includes(char)){
-          operator = char
-          break;
-        }
-      }
-      if(!operator){
-        return setInput(parseFloat(value).toString())
-      }
-
-      const [operand1, operand2] = value
-      .split(operator).map(parseFloat)
-
-      switch (operator){
-        case '+':
-          result = operand1 + operand2
-          break;
-        case '-':
-          result = operand1 - operand2
-          break;
-        case '*':
-          result = operand1 * operand2
-          break;
-        case '/':
-          result = operand1 / operand2
-          break
-        default:
-          throw new Error('Invalid Operator')
-      }
-      
-      return { input: result.toString() }      
-      
-    }catch(error){
-      setInput('Error')
-    }
-  }
   
   const calculatorReducer = (state, action) =>{
     switch(action.type){
@@ -61,7 +20,7 @@ function App() {
       }
 
       case 'CALCULATE':{
-        return calculateResult(state.input)
+        return CalculateResult(state.input)
       }
 
       default:
