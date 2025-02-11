@@ -20,6 +20,10 @@ function App() {
       }
 
       case 'CALCULATE':{
+        /**
+         * here calculate result acts as a pure function
+         * hence it works in react aswell
+         */
         return CalculateResult(state.input)
       }
 
