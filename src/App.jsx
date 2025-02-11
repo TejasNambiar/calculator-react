@@ -6,6 +6,7 @@ import CalculateResult from './CalculateResult'
 function App() {  
   let initialState = { input: ''}
   
+  {/* this reducer gets called when a button click gets trigerred*/}
   const calculatorReducer = (state, action) =>{
     switch(action.type){
 
@@ -32,7 +33,6 @@ function App() {
     }
   }
 
-  // const [input, setInput] = useState('0')
   const [state, dispatch] = useReducer(calculatorReducer, initialState)
 
   return (
