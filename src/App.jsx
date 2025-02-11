@@ -1,35 +1,18 @@
-import { useState } from 'react'
+import { useReducer, useState } from 'react'
 import './App.css'
 import CalculatorBody from './CalculatorBody'
 
-function App() {
-  const [input, setInput] = useState('0')
-
-  const handleButtonClick = (value) =>{
-    switch (value){
-      case 'C':
-        setInput('')
-        break;
-      case '<':
-        setInput(input.slice(0,-1))
-        break;
-      case '=':
-        calculateResult(input)
-        break
-      default:
-        setInput((prevValue) => prevValue + value)
-        break
-    }
-  }
+function App() {  
+  let initialState = { input: ''}
 
   const calculateResult = (value) =>{
     let result = ''
     try{
       const operators = ['+','-','*','/']
       let operator = null
-      for(let i=0; i<value.length;i++){
-        if(operators.includes(input[i])){
-          operator = input[i]
+      for(let char of value){
+        if(operators.includes(char)){
+          operator = char
           break;
         }
       }
@@ -37,7 +20,7 @@ function App() {
         return setInput(parseFloat(value).toString())
       }
 
-      const [operand1, operand2] = input
+      const [operand1, operand2] = value
       .split(operator).map(parseFloat)
 
       switch (operator){
@@ -57,18 +40,43 @@ function App() {
           throw new Error('Invalid Operator')
       }
       
-      return setInput(result.toString())      
+      return { input: result.toString() }      
       
     }catch(error){
       setInput('Error')
     }
   }
+  
+  const calculatorReducer = (state, action) =>{
+    switch(action.type){
+
+      case 'CLEAR':
+        return { input: ''}
+      
+      case 'DELETE':
+        return { input: state.input.slice(0,-1)}
+
+      case 'APPEND':{
+        return {input: state.input + action.payload}
+      }
+
+      case 'CALCULATE':{
+        return calculateResult(state.input)
+      }
+
+      default:
+        return state
+    }
+  }
+
+  // const [input, setInput] = useState('0')
+  const [state, dispatch] = useReducer(calculatorReducer, initialState)
 
   return (
     <div className='container'>
       <div className='calc'>
-        <h1 id='input'>{input}</h1>
-        <CalculatorBody handleButtonClick={handleButtonClick}/>
+        <h1 id='input'>{state.input}</h1>
+        <CalculatorBody dispatch={dispatch}/>
       </div>
     </div>
   )
